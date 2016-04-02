@@ -1,0 +1,23 @@
+name: TModsServerAddons_Crates
+main: me.tmods.serveraddons.Crates
+version: 1.61
+author: Timo Hocker
+website: http://timosmods.weebly.com
+
+depends:
+ - TModsServerUtils
+commands:
+  crate:
+    description: create a crate
+    usage: /crate [type]
+  createcrate:
+    description: create a crate out of a chest
+    usage: /createcrate [type]
+  delcrate:
+    description: delete a crate
+    usage: /delcrate [type]
+  cratekey:
+    description: set a needed item to open a crate
+    usage: /cratekey [type]
+Permissions:
+  ServerAddons.crate
