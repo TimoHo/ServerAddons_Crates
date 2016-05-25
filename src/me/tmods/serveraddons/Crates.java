@@ -23,6 +23,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.tmods.api.Sound;
 import me.tmods.serverutils.Methods;
 public class Crates extends JavaPlugin implements Listener{
 	public File maincfgfile = new File("plugins/TModsServerUtils", "data.yml");
@@ -202,7 +203,7 @@ public class Crates extends JavaPlugin implements Listener{
 							int rand = (int) Math.round(Math.random() * (maincfg.getConfigurationSection("Crates." + event.getInventory().getItem(0).getItemMeta().getDisplayName()).getKeys(false).size()-1));
 							ItemStack is = maincfg.getItemStack("Crates." + event.getInventory().getItem(0).getItemMeta().getDisplayName() + "." + maincfg.getConfigurationSection("Crates." + event.getInventory().getItem(0).getItemMeta().getDisplayName()).getKeys(false).toArray()[rand]);
 							event.getInventory().setItem(13, is);
-							Methods.playSound("Note_Harp", event.getPlayer().getLocation(), (Player) event.getPlayer());
+							Methods.playSound(Sound.NOTE_PIANO, event.getPlayer().getLocation(), (Player) event.getPlayer());
 							if (timeout >= 100) {
 								event.getPlayer().getInventory().addItem(event.getInventory().getItem(13));
 								if (tasks.containsKey(event.getPlayer())) {
