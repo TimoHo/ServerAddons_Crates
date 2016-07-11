@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Chest;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -23,7 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import me.tmods.api.Sound;
 import me.tmods.serverutils.Methods;
 public class Crates extends JavaPlugin implements Listener{
 	public File maincfgfile = new File("plugins/TModsServerUtils", "data.yml");
@@ -59,15 +59,15 @@ public class Crates extends JavaPlugin implements Listener{
 		try {
 		if (cmd.getName().equalsIgnoreCase("crate")) {
 			if (args.length != 1) {
-				sender.sendMessage(Methods.getLang("wichtypecrate"));
+				sender.sendMessage("wich type of crate?");
 				return false;
 			}
 			if (!sender.hasPermission("ServerAddons.crate")) {
-				sender.sendMessage(Methods.getLang("permdeny"));
+				sender.sendMessage("you don't have access to that command!");
 				return true;
 			}
 			if (!maincfg.getConfigurationSection("Crates").contains(args[0])) {
-				sender.sendMessage(Methods.getLang("unknowncrate"));
+				sender.sendMessage("unknown crate");
 				return true;
 			}
 			if (sender instanceof Player) {
@@ -82,22 +82,22 @@ public class Crates extends JavaPlugin implements Listener{
 		}
 		if (cmd.getName().equalsIgnoreCase("createcrate")) {
 			if (args.length != 1) {
-				sender.sendMessage(Methods.getLang("wichtypecrate"));
+				sender.sendMessage("wich type of crate?");
 				return false;
 			}
 			if (!sender.hasPermission("ServerAddons.crate")) {
-				sender.sendMessage(Methods.getLang("permdeny"));
+				sender.sendMessage("You don't have access to that command!");
 				return true;
 			}
 			if (sender instanceof Player) {
 				Player p = (Player) sender;
 				if (p.getTargetBlock((Set<Material>)null, 200).getType().equals(Material.CHEST)) {
 					Chest chest = (Chest) p.getTargetBlock((Set<Material>)null, 200).getState();
-					if (chest.getBlockInventory().getContents().length > 0) {
+					if (chest.getInventory().getContents().length > 0) {
 						for (int i = 0;i < chest.getInventory().getContents().length;i++) {
-							maincfg.set("Crates." + args[0] + "." + i, chest.getInventory().getContents()[i]);
+							maincfg.set("Crates." + args[0] + "." + i, chest.getInventory().getItem(i));
 						}
-						sender.sendMessage(Methods.getLang("crateset"));
+						sender.sendMessage("crate set");
 						try {
 							maincfg.save(maincfgfile);
 						} catch (IOException e) {
@@ -110,20 +110,20 @@ public class Crates extends JavaPlugin implements Listener{
 		}
 		if (cmd.getName().equalsIgnoreCase("delcrate")) {
 			if (args.length != 1) {
-				sender.sendMessage(Methods.getLang("wichtypecrate"));
+				sender.sendMessage("wich type of crate?");
 				return false;
 			}
 			if (!sender.hasPermission("ServerAddons.crate")) {
-				sender.sendMessage(Methods.getLang("permdeny"));
+				sender.sendMessage("You don't have access to that command");
 				return true;
 			}
 			if (!maincfg.getConfigurationSection("Crates").contains(args[0])) {
-				sender.sendMessage(Methods.getLang("unknowncrate"));
+				sender.sendMessage("unknown crate");
 				return true;
 			}
 			if (sender instanceof Player) {
 				maincfg.set("Crates." + args[0], null);
-				sender.sendMessage(Methods.getLang("cratedel"));
+				sender.sendMessage("crate deleted");
 				try {
 					maincfg.save(maincfgfile);
 				} catch (IOException e) {
@@ -134,15 +134,15 @@ public class Crates extends JavaPlugin implements Listener{
 		}
 		if (cmd.getName().equalsIgnoreCase("cratekey")) {
 			if (args.length != 1) {
-				sender.sendMessage(Methods.getLang("wichtypecrate"));
+				sender.sendMessage("wich type of crate?");
 				return false;
 			}
 			if (!sender.hasPermission("ServerAddons.crate")) {
-				sender.sendMessage(Methods.getLang("permdeny"));
+				sender.sendMessage("you don't have access to that command!");
 				return true;
 			}
 			if (!maincfg.getConfigurationSection("Crates").contains(args[0])) {
-				sender.sendMessage(Methods.getLang("unknowncrate"));
+				sender.sendMessage("unknown crate!");
 				return true;
 			}
 			if (sender instanceof Player) {
@@ -157,7 +157,7 @@ public class Crates extends JavaPlugin implements Listener{
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-				sender.sendMessage(Methods.getLang("keyset"));
+				sender.sendMessage("key set");
 				return true;
 			}
 		}
@@ -175,12 +175,12 @@ public class Crates extends JavaPlugin implements Listener{
 				if (maincfg.getItemStack("Keys." + event.getInventory().getItem(0).getItemMeta().getDisplayName()) != null) {
 					if (Methods.getItemInHand((Player) event.getPlayer()) == null) {
 						event.getPlayer().closeInventory();
-						event.getPlayer().sendMessage(Methods.getLang("nokeyfound"));
+						event.getPlayer().sendMessage("you don't have a key!");
 						cancelled = true;
 					} else {
 						if (!Methods.getItemInHand((Player) event.getPlayer()).isSimilar(maincfg.getItemStack("Keys." + event.getInventory().getItem(0).getItemMeta().getDisplayName()))) {
 							event.getPlayer().closeInventory();
-							event.getPlayer().sendMessage(Methods.getLang("wrongkey"));
+							event.getPlayer().sendMessage("this is the wrong key!");
 							cancelled = true;
 						}
 					}
@@ -203,7 +203,7 @@ public class Crates extends JavaPlugin implements Listener{
 							int rand = (int) Math.round(Math.random() * (maincfg.getConfigurationSection("Crates." + event.getInventory().getItem(0).getItemMeta().getDisplayName()).getKeys(false).size()-1));
 							ItemStack is = maincfg.getItemStack("Crates." + event.getInventory().getItem(0).getItemMeta().getDisplayName() + "." + maincfg.getConfigurationSection("Crates." + event.getInventory().getItem(0).getItemMeta().getDisplayName()).getKeys(false).toArray()[rand]);
 							event.getInventory().setItem(13, is);
-							Methods.playSound(Sound.NOTE_PIANO, event.getPlayer().getLocation(), (Player) event.getPlayer());
+							((Player) event.getPlayer()).playSound(event.getPlayer().getLocation(), Sound.BLOCK_NOTE_HARP, 1, 1);
 							if (timeout >= 100) {
 								event.getPlayer().getInventory().addItem(event.getInventory().getItem(13));
 								if (tasks.containsKey(event.getPlayer())) {
@@ -265,16 +265,16 @@ public class Crates extends JavaPlugin implements Listener{
 	public void onBlockBreak(BlockBreakEvent event) {
 		try {
 		if (event.getBlock().getType() == Material.CHEST) {
-			if (((Chest)event.getBlock().getState()).getBlockInventory().getItem(0) != null) {
-				if (((Chest)event.getBlock().getState()).getBlockInventory().getItem(0).hasItemMeta()) {
+			if (((Chest)event.getBlock().getState()).getInventory().getItem(0) != null) {
+				if (((Chest)event.getBlock().getState()).getInventory().getItem(0).hasItemMeta()) {
 					if (maincfg.getConfigurationSection("Crates") != null) {
 						if (maincfg.getConfigurationSection("Crates").getKeys(false).size() > 0) {
-							if (maincfg.getConfigurationSection("Crates").getKeys(false).contains(((Chest)event.getBlock().getState()).getBlockInventory().getItem(0).getItemMeta().getDisplayName())) {
+							if (maincfg.getConfigurationSection("Crates").getKeys(false).contains(((Chest)event.getBlock().getState()).getInventory().getItem(0).getItemMeta().getDisplayName())) {
 								if (!event.getPlayer().hasPermission("ServerAddons.crate")) {
 									event.setCancelled(true);
 								} else {
-									((Chest)event.getBlock().getState()).getBlockInventory().setItem(0, null);
-									((Chest)event.getBlock().getState()).getBlockInventory().setItem(13, null);
+									((Chest)event.getBlock().getState()).getInventory().setItem(0, null);
+									((Chest)event.getBlock().getState()).getInventory().setItem(13, null);
 								}
 							}
 						}
